@@ -23,6 +23,16 @@ function WpaSupplicant:getNetworkList()
     local list = wcli:scanThenGetResults()
     wcli:close()
 
+    -- Remove duplicate SSIDs
+    local ssids = {}
+    for i, network in ipairs(list) do
+        if not ssids[network.ssid] then
+            ssids[network.ssid] = true
+        else
+            table.remove(list, i)
+        end
+    end
+
     local saved_networks = self:getAllSavedNetworks()
     local curr_network = self:getCurrentNetwork()
 
